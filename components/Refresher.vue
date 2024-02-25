@@ -8,16 +8,13 @@ const emit = defineEmits<{
 }>();
 
 onMounted(() => {
-  let counter = 0;
-
   setInterval(() => {
-    if (counter === 6) {
-      emit("refresh");
-      counter = 0;
-    }
-    progressBar.value = counter * 25;
-    counter++;
-  }, 250);
+    emit("refresh");
+  }, useRuntimeConfig().public.REFRESH_TIME);
+  setInterval(() => {
+    progressBar.value = progressBar.value + 20;
+    if (progressBar.value > 100) progressBar.value = 0;
+  }, 500);
 });
 </script>
 
@@ -26,13 +23,16 @@ onMounted(() => {
   <h2
     class="text-xl text-center mb-2"
     :class="{
-      'text-green-600': isServerOnline,
-      'text-red-600': !isServerOnline,
+      'text-green-600': props.isServerOnline,
+      'text-red-600': !props.isServerOnline,
     }"
   >
-    {{ isServerOnline ? "Online!" : "Offline!" }}
+    {{ props.isServerOnline ? "Online!" : "Offline!" }}
   </h2>
-  <UProgress animation="swing" v-if="isServerOnline" />
+  <UProgress
+    :value="progressBar"
+    :color="props.isServerOnline ? 'green' : 'red'"
+  />
 </template>
 
 <style scoped></style>

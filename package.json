@@ -19,6 +19,7 @@
     "@nuxt/ui": "^2.11.0",
     "ansicolor": "^2.0.1",
     "nuxt-socket-io": "^3.0.13",
+    "vue-timeago3": "^2.3.2",
     "zod": "^3.22.4"
   }
 }

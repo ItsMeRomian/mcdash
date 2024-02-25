@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { ServerResponse } from "~/app.vue";
+import type { ServerResponse } from "~/server/api/refresh";
 
 defineProps<{
-  server: ServerResponse;
+  server: ServerResponse | null;
 }>();
 </script>
 
 <template>
   <div>
-    <ul>
+    <ul v-if="server">
       <li>Online: {{ server.onlinePlayers }} / {{ server.maxPlayers }}</li>
       <li>Version: {{ server.version }}</li>
       <li>
@@ -27,5 +27,11 @@ defineProps<{
       </li>
       <li>TPS: {{ server.tps }}</li>
     </ul>
+    <div class="flex flex-col gap-2" v-else>
+      <USkeleton class="h-4 w-full" />
+      <USkeleton class="h-4 w-3/4" />
+      <USkeleton class="h-4 w-1/2" />
+      <USkeleton class="h-4 w-[250px]" />
+    </div>
   </div>
 </template>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { FormSubmitEvent } from "#ui/types";
-import type { ServerResponse } from "~/app.vue";
+import type { ServerResponse } from "~/server/api/refresh";
 defineProps<{
-  server: ServerResponse;
+  server: ServerResponse | null;
+  lastOnline: Record<string, number>;
 }>();
 const emit = defineEmits<{
   (event: "refresh"): void;
@@ -12,42 +12,31 @@ const state = reactive({
   username: undefined as undefined | string,
 });
 
-const addUserToWhitelist = async (data: { username: string }) => {
-  console.log(data);
-  const res = await fetch("http://192.168.1.100:4567/v1/server/exec", {
+const updateWhitelist = async (data: {
+  username: string;
+  action: "add" | "remove";
+}) => {
+  const res = await useFetch("/api/exec/", {
     method: "POST",
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      key: "s3p3rS3cur3!",
+      "Content-Type": "application/json",
+      key: useRuntimeConfig().API_KEY,
     },
-    body: new URLSearchParams({
-      command: `whitelist add ${data.username}`,
-    }),
+    body: {
+      command: `whitelist ${data.action} ${data.username}`,
+    },
   });
-  emit("refresh");
-  console.log(res);
-};
-
-const removeUserFromWhitelist = async (data: { username: string }) => {
-  console.log(data);
-  const res = await fetch("http://192.168.1.100:4567/v1/server/exec", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      key: "s3p3rS3cur3!",
-    },
-    body: new URLSearchParams({
-      command: `whitelist remove ${data.username}`,
-    }),
+  useToast().add({
+    title: "Whitelist updated",
+    description: (res.data.value as string) || "",
   });
   emit("refresh");
   state.username = "";
-  console.log(res);
 };
 </script>
 
 <template>
-  <div>
+  <div class="max-h-[15rem] overflow-scroll" v-if="server">
     <ul
       v-for="whitelisted of server.whitelistedPlayers.sort((a, b) =>
         a.name.localeCompare(b.name)
@@ -56,21 +45,31 @@ const removeUserFromWhitelist = async (data: { username: string }) => {
       <li
         class="flex flex-row justify-between hover:bg-slate-600 p-2 text-left"
       >
-        <span>
+        <span class="flex flex-row gap-4 items-center">
           <UIcon
             name="material-symbols:circle"
             dynamic
+            class=""
             :class="{
               'text-green-500': server.currentOnlinePlayers.find(
                 (o) => o.displayName === whitelisted.name
               ),
             }"
           />
-          <span class="ml-4">{{ whitelisted.name }}</span>
+          <span class="flex flex-col">
+            <span>{{ whitelisted.name }}</span>
+            <span class="text-xs text-gray-400">
+              Last online:
+              <timeago :datetime="lastOnline[whitelisted.name] || 0" />
+            </span>
+          </span>
         </span>
 
         <UButton
-          @click="removeUserFromWhitelist({ username: whitelisted.name })"
+          @click="
+            updateWhitelist({ username: whitelisted.name, action: 'remove' })
+          "
+          class="max-h-8"
         >
           <UIcon name="i-mdi-trash" dynamic />
         </UButton>
@@ -80,7 +79,10 @@ const removeUserFromWhitelist = async (data: { username: string }) => {
     <UForm
       class="mt-2"
       :state="state"
-      @submit="({ data }) => addUserToWhitelist(data)"
+      @submit="
+        ({ data }) =>
+          updateWhitelist({ username: data.username, action: 'add' })
+      "
     >
       <UInput
         v-model="state.username"
@@ -89,4 +91,16 @@ const removeUserFromWhitelist = async (data: { username: string }) => {
       />
     </UForm>
   </div>
+  <ul v-else v-for="i in 4" :key="i">
+    <li class="flex flex-row justify-between hover:bg-slate-600 p-2 text-left">
+      <span class="flex flex-row gap-4 items-center">
+        <USkeleton class="h-4 w-4 rounded-full" />
+        <span class="flex flex-col gap-1">
+          <USkeleton class="h-4 w-40" />
+          <USkeleton class="h-4 w-1/2" />
+        </span>
+      </span>
+      <USkeleton class="h-8 w-8" />
+    </li>
+  </ul>
 </template>

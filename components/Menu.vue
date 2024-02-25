@@ -13,7 +13,7 @@
     </span>
     <a
       class="hover:bg-green-300 cursor-pointer"
-      href="http://play.dyna.host:8123"
+      href="http://play.dyna.host/dynmap/"
       target="_blank"
     >
       <UIcon

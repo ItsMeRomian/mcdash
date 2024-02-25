@@ -1,75 +1,16 @@
-# Nuxt 3 Minimal Starter
+# Minecraft server dashboard for ServerTap
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+A simple Minecraft server dashboard. Using Nuxt3, ServerTap, NuxtUI.  
+Made to be running ON the machine that runs the minecraft server, so the ServerTap port does not have to be exposed.
 
-## Setup
+<img width="318" alt="image" src="https://github.com/ItsMeRomian/mcdash/assets/13468715/cc6fc0d1-fa05-4c04-97eb-57fd5532b934">
 
-Make sure to install the dependencies:
 
-```bash
-# npm
-npm install
 
-# pnpm
-pnpm install
+## Features
 
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+- See if the server is working
+- See online players
+- Whitelist management
+- Access to the console, if you are in the local network (this could be expoosed)
+- Quick actions to stop/start/save the server
